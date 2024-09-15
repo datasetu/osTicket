@@ -2644,7 +2644,7 @@ implements RestrictedAccess, Threadable, Searchable, JsonSerializable {
     }
 
     function hasReferral($object, $type) {
-        if (($referral=$this->thread->getReferral($object->getId(), $type)))
+        if (($referral=$this->getThread()->getReferral($object->getId(), $type)))
             return $referral;
 
         return false;
@@ -4367,9 +4367,6 @@ implements RestrictedAccess, Threadable, Searchable, JsonSerializable {
             return null;
 
         /* -------------------- POST CREATE ------------------------ */
-        $vars['ticket'] = $ticket;
-        self::filterTicketData($origin, $vars,
-            array_merge(array($form), $topic_forms), $user, true);
 
         // Save the (common) dynamic form
         // Ensure we have a subject
@@ -4426,6 +4423,10 @@ implements RestrictedAccess, Threadable, Searchable, JsonSerializable {
         $vars['title'] = $vars['subject']; //Use the initial subject as title of the post.
         $vars['userId'] = $ticket->getUserId();
         $message = $ticket->postMessage($vars , $origin, false);
+
+        $vars['ticket'] = $ticket;
+        self::filterTicketData($origin, $vars,
+            array_merge(array($form), $topic_forms), $user, true);
 
         // If a message was posted, flag it as the orignal message. This
         // needs to be done on new ticket, so as to otherwise separate the
